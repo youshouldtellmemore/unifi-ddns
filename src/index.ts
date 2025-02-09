@@ -58,7 +58,23 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 		throw new HttpError(401, 'This API Token is ' + tokenStatus);
 	}
 
-	const policyUUID = await cloudflare.kv.get(newPolicy.name);
+	// Get KV namespace.
+	const namespaces = (await cloudflare.kv.namespaces.list()).result;
+	if (namespaces.length == 0) {
+		throw new HttpError(400, 'No KV namespaces found!');
+	}
+
+	// Get specific namespace.
+	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
+	const namespace = await cloudflare.kv.namespaces.list().then(namespaces =>
+		namespaces.find(ns => ns.title === nsTitle)
+	);
+	if (!namespace) {
+		throw new HttpError(400, 'Unable to locate KV namespace with title ' + nsTitle + '.');
+	}
+
+	// Get policy noted by hostname input.
+	const policyUUID = await cloudflare.kv.namespaces.keys.get(namespace.id, newPolicy.hostname);
 	if (!policyUUID) {
 		return new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}

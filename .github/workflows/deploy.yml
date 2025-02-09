@@ -21,4 +21,3 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          kvNamespaceId: ${{ secrets.CLOUDFLARE_KV_ID }}

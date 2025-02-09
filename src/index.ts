@@ -57,13 +57,12 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 	if (tokenStatus !== 'active') {
 		throw new HttpError(401, 'This API Token is ' + tokenStatus);
 	}
-	console.log('DEBUG: token status is active');
+
 	// Get KV namespace.
 	const namespaces = (await cloudflare.kv.namespaces.list()).result;
 	if (namespaces.length == 0) {
 		throw new HttpError(400, 'No KV namespaces found!');
 	}
-	console.log('DEBUG: namesspaces listed');
 
 	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
@@ -73,14 +72,12 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 	if (!namespace) {
 		throw new HttpError(400, 'Unable to locate KV namespace with title ' + nsTitle + '.');
 	}
-	console.log('DEBUG: namespace found');
 
 	// Get policy noted by hostname input.
 	const policyUUID = await cloudflare.kv.namespaces.keys.get(namespace.id, newPolicy.name);
 	if (!policyUUID) {
 		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}
-	console.log('DEBUG: policy found');
 
 	// Fetch existing policy
 	const policyResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID);
@@ -129,9 +126,11 @@ export default {
 
 		try {
 			// Construct client options and IP policy
+			console.log('before constructClientOptions');
 			const clientOptions = constructClientOptions(request);
+			console.log('before constructIPPolicy');
 			const policy = constructIPPolicy(request);
-
+			console.log('before update');
 			// Run the update function
 			return await update(env, clientOptions, policy);
 		} catch (error) {

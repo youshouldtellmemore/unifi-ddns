@@ -51,9 +51,8 @@ function constructIPPolicy(request: Request): IPPolicy {
 }
 
 async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promise<Response> {
-	console.log('before cloudflare');
 	const cloudflare = new Cloudflare(clientOptions);
-	console.log('before tokenStatus');
+
 	const tokenStatus = (await cloudflare.user.tokens.verify()).status;
 	if (tokenStatus !== 'active') {
 		throw new HttpError(401, 'This API Token is ' + tokenStatus);
@@ -64,7 +63,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (namespaces.length == 0) {
 		throw new HttpError(400, 'No KV namespaces found!');
 	}
-
+	console.log('before namespace');
 	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
 	const namespace = await cloudflare.kv.namespaces.list().then(namespaces =>
@@ -73,19 +72,19 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (!namespace) {
 		throw new HttpError(400, 'Unable to locate KV namespace with title ' + nsTitle + '.');
 	}
-
+	console.log('before policyUUID');
 	// Get policy noted by hostname input.
 	const policyUUID = await cloudflare.kv.namespaces.keys.get(namespace.id, newPolicy.name);
 	if (!policyUUID) {
 		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}
-
+	console.log('before policyResponse');
 	// Fetch existing policy
 	const policyResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID);
 	if (!policyResponse.ok) {
 		throw new HttpError(400, 'Failed to fetch access policy.');
 	}
-
+	console.log('before policyData');
 	const policyData = await policyResopnse.json();
 
 	// Modify the IP rule in the policy

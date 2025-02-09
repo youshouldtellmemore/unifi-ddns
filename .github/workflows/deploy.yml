@@ -16,6 +16,10 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Wrangler
+        run: |
+            npm install -g wrangler
+
       - name: Check for Existing KV Namespace
         id: check_kv
         run: |
@@ -26,7 +30,6 @@ jobs:
             fi
             echo "KV_KD=$KV_ID" >> $GITHUB_ENV
             echo "CLOUDFLARE_KV_ID=$KV_ID" >> $GITHUB_ENV
-
       - name: Deploy
         uses: cloudflare/wrangler-action@6d58852c35a27e6034745c5d0bc373d739014f7f # v3
         with:

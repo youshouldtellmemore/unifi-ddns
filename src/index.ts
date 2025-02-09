@@ -58,7 +58,7 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 		throw new HttpError(401, 'This API Token is ' + tokenStatus);
 	}
 
-	const policyUUID = await env.CLOUDFLARE_KV.get(newPolicy.name);
+	const policyUUID = await cloudflare.kv.get(newPolicy.name);
 	if (!policyUUID) {
 		return new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}

@@ -46,7 +46,7 @@ function constructIPPolicy(request: Request): IPPolicy {
 
 	return {
 		content: ip,
-		name: hostname
+		name: policyKey
 	};
 }
 

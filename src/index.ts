@@ -51,13 +51,14 @@ function constructIPPolicy(request: Request): IPPolicy {
 }
 
 async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promise<Response> {
+	console.log('before cloudflare');
 	const cloudflare = new Cloudflare(clientOptions);
-
+	console.log('before tokenStatus');
 	const tokenStatus = (await cloudflare.user.tokens.verify()).status;
 	if (tokenStatus !== 'active') {
 		throw new HttpError(401, 'This API Token is ' + tokenStatus);
 	}
-
+	console.log('before namespaces');
 	// Get KV namespace.
 	const namespaces = (await cloudflare.kv.namespaces.list()).result;
 	if (namespaces.length == 0) {
@@ -126,11 +127,9 @@ export default {
 
 		try {
 			// Construct client options and IP policy
-			console.log('before constructClientOptions');
 			const clientOptions = constructClientOptions(request);
-			console.log('before constructIPPolicy');
 			const policy = constructIPPolicy(request);
-			console.log('before update');
+
 			// Run the update function
 			return await update(clientOptions, policy);
 		} catch (error) {

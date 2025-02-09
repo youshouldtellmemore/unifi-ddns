@@ -74,7 +74,7 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 	}
 
 	// Get policy noted by hostname input.
-	const policyUUID = await cloudflare.kv.namespaces.keys.get(namespace.id, newPolicy.hostname);
+	const policyUUID = await cloudflare.kv.namespaces.keys.get(namespace.id, newPolicy.name);
 	if (!policyUUID) {
 		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}

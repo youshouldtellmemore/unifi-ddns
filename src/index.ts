@@ -10,7 +10,7 @@ class HttpError extends Error {
 	}
 }
 
-function constructClientOptions(request: Request): ClientOptions {
+function constructClientOptions(request: Request, account_id: string): ClientOptions {
 	const authorization = request.headers.get('Authorization');
 	if (!authorization) {
 		throw new HttpError(401, 'API token missing.');
@@ -27,6 +27,7 @@ function constructClientOptions(request: Request): ClientOptions {
 	return {
 		apiEmail: decoded.substring(0, index),
 		apiToken: decoded.substring(index + 1),
+		accountId: env.account_id,
 	};
 }
 
@@ -119,7 +120,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 }
 
 export default {
-	async fetch(request: Request): Promise<Response> {
+	async fetch(request: Request, env: Env): Promise<Response> {
 		const url = new URL(request.url);
 		console.log('Requester IP: ' + request.headers.get('CF-Connecting-IP'));
 		console.log(request.method + ': ' + request.url);
@@ -127,7 +128,7 @@ export default {
 
 		try {
 			// Construct client options and IP policy
-			const clientOptions = constructClientOptions(request);
+			const clientOptions = constructClientOptions(request, env.account_id);
 			const policy = constructIPPolicy(request);
 
 			// Run the update function

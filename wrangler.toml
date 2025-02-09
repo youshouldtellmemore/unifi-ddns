@@ -3,10 +3,7 @@ name = "unifi-cloudflare-ddns-access"
 main = "src/index.ts"
 compatibility_date = "2025-02-09"
 compatibility_flags = ["nodejs_compat"]
-
-[[kv_namespaces]]
-binding = "unifi-cloudflare-ddns-access"
-id = "kvAccessPolicies"
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/

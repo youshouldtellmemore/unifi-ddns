@@ -16,8 +16,20 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v4
+      - name: Check for Existing KV Namespace
+        id: check_kv
+        run: |
+            KV_ID=$(npx wrangler kv:namespace list | jq -r '.[] | select(.title=="unifi-ddns-kv") | .id')
+            if [ -z "$KV_ID" ]; then
+              echo "Creating KV namespace..."
+              KV_ID=$(npx wrangler kv:namespace create CLOUDFLARE_KV | grep -oP '(?<=id = ")[^"]+')
+            fi
+            echo "KV_KD=$KV_ID" >> $GITHUB_ENV
+            echo "CLOUDFLARE_KV_ID=$KV_ID" >> $GITHUB_ENV
+
       - name: Deploy
         uses: cloudflare/wrangler-action@6d58852c35a27e6034745c5d0bc373d739014f7f # v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          kvNamespaceId: ${{ secrets.CLOUDFLARE_KV_ID }}

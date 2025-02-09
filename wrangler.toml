@@ -15,3 +15,9 @@ logs.enabled = true
 # Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
 [placement]
 mode = "smart"
+
+# Bind a KV namespace for listing policy UUIDs.
+# Configuration handled as part of .github/deploy.yml actions.
+[[kv_namespaces]]
+binding = "CLOUDFLARE_KV"
+id = "${CLOUDFLARE_KV_ID}"

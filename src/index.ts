@@ -75,11 +75,16 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 		// Modify the IP rule in the policy
 		let updates = false;
 		const newRules = policyData.result.rules.map((rule: any) => {
-			rule.include = rule.include.map((includeRule: any) => {
-				includeRule.ip = [newPolicy.content]; // Replace with the new IP
-				updated = true;
+			if (rule.include && Array.isArray(rule.include)) {
+				rule.include = rule.include.map((includeRule: any) => {
+					if (includeRule.ip) {
+						includeRule.ip = [newPolicy.content]; // Replace with the new IP
+						updated = true;
+					}
+					return includeRule;
+				});
 			}
-			return includeRule;
+			return rule;
 		});
 
 		if (!updated) {

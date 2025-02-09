@@ -79,41 +79,37 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}
 
-	try {
-		// Fetch existing policy
-		const policyResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID);
-		if (!policyResponse.ok) {
-			throw new HttpError(400, 'Failed to fetch access policy.');
+	// Fetch existing policy
+	const policyResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID);
+	if (!policyResponse.ok) {
+		throw new HttpError(400, 'Failed to fetch access policy.');
+	}
+
+	const policyData = await policyResopnse.json();
+
+	// Modify the IP rule in the policy
+	let updates = false;
+	const newRules = policyData.result.rules.map((rule: any) => {
+		if (rule.include && Array.isArray(rule.include)) {
+			rule.include = rule.include.map((includeRule: any) => {
+				if (includeRule.ip) {
+					includeRule.ip = [newPolicy.content]; // Replace with the new IP
+					updated = true;
+				}
+				return includeRule;
+			});
 		}
+		return rule;
+	});
 
-		const policyData = await policyResopnse.json();
+	if (!updated) {
+		throw new HttpError(400, 'No IP rule found to update in the policy.');
+	}
 
-		// Modify the IP rule in the policy
-		let updates = false;
-		const newRules = policyData.result.rules.map((rule: any) => {
-			if (rule.include && Array.isArray(rule.include)) {
-				rule.include = rule.include.map((includeRule: any) => {
-					if (includeRule.ip) {
-						includeRule.ip = [newPolicy.content]; // Replace with the new IP
-						updated = true;
-					}
-					return includeRule;
-				});
-			}
-			return rule;
-		});
-
-		if (!updated) {
-			throw new HttpError(400, 'No IP rule found to update in the policy.');
-		}
-
-		// Send updated policy
-		const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {rules: newRules});
-		if (!updateResponse.ok) {
-			throw new HttpError(400, 'Failed ot update access policy.')
-		}
-	} catch (error) {
-		throw new HttpError(500, 'Unknown error.')
+	// Send updated policy
+	const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {rules: newRules});
+	if (!updateResponse.ok) {
+		throw new HttpError(400, 'Failed ot update access policy.')
 	}
 
 	console.log('Policy ' + newPolicy.name + ' updated successfully to ' + newPolicy.content);

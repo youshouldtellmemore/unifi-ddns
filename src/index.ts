@@ -127,7 +127,7 @@ export default {
 
 		try {
 			// Construct client options and IP policy
-			const clientOptions = constructClientOptions(request, env.account_id);
+			const clientOptions = constructClientOptions(request, env.CLOUDFLARE_ACCOUNT_ID);
 			const policy = constructIPPolicy(request);
 
 			// Run the update function

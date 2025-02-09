@@ -76,14 +76,14 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 	// Get policy noted by hostname input.
 	const policyUUID = await cloudflare.kv.namespaces.keys.get(namespace.id, newPolicy.hostname);
 	if (!policyUUID) {
-		return new HttpError(400, 'No policy found! You must first manually create the policy.');
+		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}
 
 	try {
 		// Fetch existing policy
 		const policyResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID);
 		if (!policyResponse.ok) {
-			return new HttpError(400, 'Failed to fetch access policy.');
+			throw new HttpError(400, 'Failed to fetch access policy.');
 		}
 
 		const policyData = await policyResopnse.json();
@@ -104,16 +104,16 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 		});
 
 		if (!updated) {
-			return new HttpError(400, 'No IP rule found to update in the policy.');
+			throw new HttpError(400, 'No IP rule found to update in the policy.');
 		}
 
 		// Send updated policy
 		const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {rules: newRules});
 		if (!updateResponse.ok) {
-			return new HttpError(400, 'Failed ot update access policy.')
+			throw new HttpError(400, 'Failed ot update access policy.')
 		}
 	} catch (error) {
-		return new HttpError(500, 'Unknown error.')
+		throw new HttpError(500, 'Unknown error.')
 	}
 
 	console.log('Policy ' + newPolicy.name + ' updated successfully to ' + newPolicy.content);

@@ -27,7 +27,7 @@ function constructClientOptions(request: Request, account_id: string): ClientOpt
 	return {
 		apiEmail: decoded.substring(0, index),
 		apiToken: decoded.substring(index + 1),
-		accountId: env.account_id,
+		account_id: account_id,
 	};
 }
 
@@ -65,7 +65,6 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 		throw new HttpError(400, 'No KV namespaces found!');
 	}*/
 	console.log('before namespace');
-	console.log(cloudflare.env.kvAccessPolicies)
 	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
 	const namespace = (await cloudflare.kv.namespaces.list()).then(namespaces =>

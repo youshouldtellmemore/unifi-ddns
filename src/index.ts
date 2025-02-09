@@ -25,7 +25,7 @@ function constructClientOptions(request: Request): ClientOptions {
 	}
 
 	return {
-		accountId: decoded.substring(0, index),
+		apiEmail: decoded.substring(0, index),
 		apiToken: decoded.substring(index + 1),
 	};
 }
@@ -52,6 +52,7 @@ function constructIPPolicy(request: Request): IPPolicy {
 
 async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promise<Response> {
 	const cloudflare = new Cloudflare(clientOptions);
+	console.log(cloudflare);
 
 	const tokenStatus = (await cloudflare.user.tokens.verify()).status;
 	if (tokenStatus !== 'active') {

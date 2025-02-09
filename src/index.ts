@@ -57,8 +57,14 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (tokenStatus !== 'active') {
 		throw new HttpError(401, 'This API Token is ' + tokenStatus);
 	}
-
+	/*console.log('before namespaces');
+	// Get KV namespace.
+	const namespaces = (await cloudflare.env.kv.namespaces.list()).result;
+	if (namespaces.length == 0) {
+		throw new HttpError(400, 'No KV namespaces found!');
+	}*/
 	console.log('before namespace');
+	console.log(cloudflare.env.kvAccessPolicies)
 	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
 	const namespace = (await cloudflare.kv.namespaces.list()).then(namespaces =>

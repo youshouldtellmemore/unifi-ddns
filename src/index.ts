@@ -50,7 +50,7 @@ function constructIPPolicy(request: Request): IPPolicy {
 	};
 }
 
-async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolicy): Promise<Response> {
+async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promise<Response> {
 	const cloudflare = new Cloudflare(clientOptions);
 
 	const tokenStatus = (await cloudflare.user.tokens.verify()).status;
@@ -118,7 +118,7 @@ async function update(env: Env, clientOptions: ClientOptions, newPolicy: IPPolic
 }
 
 export default {
-	async fetch(request: Request, env: Env): Promise<Response> {
+	async fetch(request: Request): Promise<Response> {
 		const url = new URL(request.url);
 		console.log('Requester IP: ' + request.headers.get('CF-Connecting-IP'));
 		console.log(request.method + ': ' + request.url);
@@ -132,7 +132,7 @@ export default {
 			const policy = constructIPPolicy(request);
 			console.log('before update');
 			// Run the update function
-			return await update(env, clientOptions, policy);
+			return await update(clientOptions, policy);
 		} catch (error) {
 			if (error instanceof HttpError) {
 				console.log('Error updating policy: ' + error.message);

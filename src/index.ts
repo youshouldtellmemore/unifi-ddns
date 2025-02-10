@@ -51,7 +51,7 @@ function constructIPPolicy(request: Request): IPPolicy {
 }
 
 async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promise<Response> {
-	const cloudflare = new Cloudflare({clientOptions.apiToken});
+	const cloudflare = new Cloudflare(clientOptions);
 
 	const tokenStatus = (await cloudflare.user.tokens.verify()).status;
 	if (tokenStatus !== 'active') {
@@ -59,14 +59,14 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	}
 
 	// Get KV namespace.
-	const namespaces = (await cloudflare.kv.namespaces.list()).result;
+	const namespaces = (await cloudflare.kv.namespaces.list({accountId: clientOptions.accountId})).result;
 	if (namespaces.length == 0) {
 		throw new HttpError(400, 'No KV namespaces found!');
 	}
 	console.log('before namespace');
 	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
-	const namespace = (await cloudflare.kv.namespaces.list()).then(namespaces =>
+	const namespace = (await cloudflare.kv.namespaces.list({accountId: clientOptions.accountId})).then(namespaces =>
 		namespaces.find(ns => ns.title === nsTitle)
 	);
 	if (!namespace) {

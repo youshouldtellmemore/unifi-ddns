@@ -63,7 +63,8 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (namespaces.length == 0) {
 		throw new HttpError(400, 'No KV namespaces found!');
 	}
-
+	console.log('Found ' + namespaces.length + ' KV namespaces.');
+	console.log(namespaces[0]);
 	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
 	let nsId = undefined;

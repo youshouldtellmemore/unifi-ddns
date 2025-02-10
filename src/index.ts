@@ -70,7 +70,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	for(let i = 0; i < namespaces.length; i++) {
 		console.log(namespaces[i]);
 		if (namespaces[i].title == nsTitle) {
-			nsId = ns.id;
+			nsId = namespaces[i].id;
 			break;
 		}
 	}

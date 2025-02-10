@@ -77,7 +77,6 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 		throw new HttpError(400, 'Unable to locate KV namespace with title ' + nsTitle + '.');
 	}
 
-	console.log('before policyUUID');
 	// Get policy noted by hostname input.
 	const policyUUID = await cloudflare.kv.namespaces.values.get(nsId, newPolicy.name, {account_id: clientOptions.apiEmail});
 	if (!policyUUID) {

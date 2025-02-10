@@ -69,6 +69,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
 	let nsId = undefined;
 	for(var ns in namespaces) {
+		console.log(ns);
 		if (ns.title == nsTitle) {
 			nsId = ns.id;
 			break;

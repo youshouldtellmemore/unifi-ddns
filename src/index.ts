@@ -66,12 +66,17 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
-	const namespace = await cloudflare.kv.namespaces.list({account_id: clientOptions.apiEmail}).then(namespaces =>
-		namespaces.find(ns => ns.title === nsTitle)
-	);
-	if (!namespace) {
+	let nsId = undefined;
+	for(var ns in namespaces) {
+		if (ns.title == nsTitle) {
+			nsId = ns.id;
+			break;
+		}
+	}
+	if (nsId === undefined) {
 		throw new HttpError(400, 'Unable to locate KV namespace with title ' + nsTitle + '.');
 	}
+
 	console.log('before policyUUID');
 	// Get policy noted by hostname input.
 	const policyUUID = await cloudflare.kv.namespaces.keys.get(namespace.id, newPolicy.name);

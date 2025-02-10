@@ -10,7 +10,7 @@ class HttpError extends Error {
 	}
 }
 
-function constructClientOptions(request: Request, account_id: string): ClientOptions {
+function constructClientOptions(request: Request): ClientOptions {
 	const authorization = request.headers.get('Authorization');
 	if (!authorization) {
 		throw new HttpError(401, 'API token missing.');
@@ -27,7 +27,6 @@ function constructClientOptions(request: Request, account_id: string): ClientOpt
 	return {
 		apiEmail: decoded.substring(0, index),
 		apiToken: decoded.substring(index + 1),
-		account_id: account_id,
 	};
 }
 
@@ -58,9 +57,9 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (tokenStatus !== 'active') {
 		throw new HttpError(401, 'This API Token is ' + tokenStatus);
 	}
-	console.log('before namespaces');
+
 	// Get KV namespace.
-	const namespaces = (await cloudflare.env.kv.namespaces.list()).result;
+	const namespaces = (await cloudflare.kv.namespaces.list()).result;
 	if (namespaces.length == 0) {
 		throw new HttpError(400, 'No KV namespaces found!');
 	}
@@ -124,10 +123,11 @@ export default {
 		console.log('Requester IP: ' + request.headers.get('CF-Connecting-IP'));
 		console.log(request.method + ': ' + request.url);
 		console.log('Body: ' + (await request.text()));
+		console.log(env);
 
 		try {
 			// Construct client options and IP policy
-			const clientOptions = constructClientOptions(request, env.account_id);
+			const clientOptions = constructClientOptions(request);
 			const policy = constructIPPolicy(request);
 
 			// Run the update function

@@ -63,12 +63,11 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (namespaces.length == 0) {
 		throw new HttpError(400, 'No KV namespaces found!');
 	}
-	console.log('Found ' + namespaces.length + ' KV namespaces.');
+
 	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
 	let nsId = undefined;
 	for(let i = 0; i < namespaces.length; i++) {
-		console.log(namespaces[i]);
 		if (namespaces[i].title == nsTitle) {
 			nsId = namespaces[i].id;
 			break;
@@ -80,7 +79,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	console.log('before policyUUID');
 	// Get policy noted by hostname input.
-	const policyUUID = await cloudflare.kv.namespaces.keys.get(nsId, newPolicy.name);
+	const policyUUID = await cloudflare.kv.namespaces.values.get(nsId, newPolicy.name, {account_id: clientOptions.apiEmail});
 	if (!policyUUID) {
 		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}

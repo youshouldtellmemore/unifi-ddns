@@ -51,7 +51,7 @@ function constructIPPolicy(request: Request): IPPolicy {
 }
 
 async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promise<Response> {
-	const cloudflare = new Cloudflare(clientOptions);
+	const cloudflare = new Cloudflare({clientOptions.apiToken});
 
 	const tokenStatus = (await cloudflare.user.tokens.verify()).status;
 	if (tokenStatus !== 'active') {

@@ -67,7 +67,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
-	const namespace = (await cloudflare.kv.namespaces.list({accountId: clientOptions.accountId})).then(namespaces =>
+	const namespace = (await cloudflare.kv.namespaces.list({accountId: clientOptions.apiEmail})).then(namespaces =>
 		namespaces.find(ns => ns.title === nsTitle)
 	);
 	if (!namespace) {

@@ -80,7 +80,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	console.log('before policyUUID');
 	// Get policy noted by hostname input.
-	const policyUUID = await cloudflare.kv.namespaces.keys.get(namespace.id, newPolicy.name);
+	const policyUUID = await cloudflare.kv.namespaces.keys.get(nsId, newPolicy.name);
 	if (!policyUUID) {
 		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}

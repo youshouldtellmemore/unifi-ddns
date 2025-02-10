@@ -25,7 +25,7 @@ function constructClientOptions(request: Request): ClientOptions {
 	}
 
 	return {
-		accountId: decoded.substring(0, index),
+		apiEmail: decoded.substring(0, index),
 		apiToken: decoded.substring(index + 1),
 	};
 }

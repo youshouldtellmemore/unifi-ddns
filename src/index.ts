@@ -68,7 +68,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	console.log(cloudflare.account_id);
 	console.log('before namespace');
 	// Get specific namespace.
-	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
+	/*const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
 	const namespace = (await cloudflare.kv.namespaces.list()).then(namespaces =>
 		namespaces.find(ns => ns.title === nsTitle)
 	);
@@ -116,7 +116,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	}
 
 	console.log('Policy ' + newPolicy.name + ' updated successfully to ' + newPolicy.content);
-
+*/
 	return new Response('OK', { status: 200 });
 }
 

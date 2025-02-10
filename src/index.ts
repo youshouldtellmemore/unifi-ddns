@@ -123,7 +123,6 @@ export default {
 		console.log('Requester IP: ' + request.headers.get('CF-Connecting-IP'));
 		console.log(request.method + ': ' + request.url);
 		console.log('Body: ' + (await request.text()));
-		console.log(env);
 
 		try {
 			// Construct client options and IP policy

@@ -58,17 +58,15 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (tokenStatus !== 'active') {
 		throw new HttpError(401, 'This API Token is ' + tokenStatus);
 	}
-	/*console.log('before namespaces');
+	console.log('before namespaces');
 	// Get KV namespace.
 	const namespaces = (await cloudflare.env.kv.namespaces.list()).result;
 	if (namespaces.length == 0) {
 		throw new HttpError(400, 'No KV namespaces found!');
-	}*/
-	console.log('before env');
-	console.log(cloudflare.account_id);
+	}
 	console.log('before namespace');
 	// Get specific namespace.
-	/*const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
+	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
 	const namespace = (await cloudflare.kv.namespaces.list()).then(namespaces =>
 		namespaces.find(ns => ns.title === nsTitle)
 	);
@@ -116,7 +114,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	}
 
 	console.log('Policy ' + newPolicy.name + ' updated successfully to ' + newPolicy.content);
-*/
+
 	return new Response('OK', { status: 200 });
 }
 

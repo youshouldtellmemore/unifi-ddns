@@ -86,7 +86,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	console.log('KV store ' + nsTitle + ' key "' + newPolicy.name + '" found with value "' + policyUUID + '".');
 
 	// Fetch existing policy
-	const policyResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {account_id: clientOptions.apiEmail});
+	const policyResponse = await cloudflare.zeroTrust.access.policies.get(policyUUID, {account_id: clientOptions.apiEmail});
 	if (!policyResponse.ok) {
 		throw new HttpError(400, 'Failed to fetch access policy.');
 	}

@@ -79,10 +79,10 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	// Get policy noted by hostname input.
 	const policyUUIDResponse = await cloudflare.kv.namespaces.values.get(nsId, newPolicy.name, {account_id: clientOptions.apiEmail});
-	if (!policyUUIDResponse) {
-		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
+	if (!policyUUIDResponse.ok) {
+		throw new HttpError(400, 'Failed to fetch from KV store.');
 	}
-	const policyUUID = await policyUUID.text();
+	const policyUUID = await policyUUIDResponse.text();
 	console.log('KV store ' + nsTitle + ' key "' + newPolicy.name + '" found with value "' + policyUUID + '".');
 
 	// Fetch existing policy

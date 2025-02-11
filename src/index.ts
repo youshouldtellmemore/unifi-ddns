@@ -90,7 +90,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (!policyResponse.ok) {
 		throw new HttpError(400, 'Failed to fetch access policy.');
 	}
-	const policyData = await policyResopnse.json();
+	const policyData = await policyResponse.json();
 
 	// Modify the IP rule in the policy
 	let updated = false;
@@ -114,7 +114,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	// Send updated policy
 	const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {rules: newRules, account_id: clientOptions.apiEmail});
 	if (!updateResponse.ok) {
-		throw new HttpError(400, 'Failed ot update access policy.')
+		throw new HttpError(400, 'Failed to update access policy.')
 	}
 
 	console.log('Policy ' + newPolicy.name + ' updated successfully to ' + newPolicy.content);

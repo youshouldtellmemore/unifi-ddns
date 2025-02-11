@@ -95,7 +95,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	// Modify the IP rule in the policy
 	let updated = false;
 	const newRules = policyData.result.rules.map((rule: any) => {
-		if (rule.include && Array.isArray(rule.include)) {
+		/*if (rule.include && Array.isArray(rule.include)) {
 			rule.include = rule.include.map((includeRule: any) => {
 				if (includeRule.ip) {
 					includeRule.ip = [newPolicy.content]; // Replace with the new IP
@@ -103,8 +103,9 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 				}
 				return includeRule;
 			});
-		}
-		return rule;
+		}*/
+		rule.purpose === "ip" ? { ...rule, value: newAllowedIps } : rule
+		//return rule;
 	});
 
 	if (!updated) {

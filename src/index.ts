@@ -82,7 +82,8 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (!policyUUID) {
 		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}
-	console.log('before policyResponse');
+	console.log('KV store ' + nsTitle + ' key "' + newPolicy.name + '" found and has value "' + policyUUID + '".');
+
 	// Fetch existing policy
 	const policyResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {account_id: clientOptions.apiEmail});
 	if (!policyResponse.ok) {

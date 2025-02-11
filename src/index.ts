@@ -90,19 +90,16 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (!policyResponse.ok) {
 		throw new HttpError(400, 'Failed to fetch access policy.');
 	}
+	console.log('before policyResponse.json');
 	const policyData = await policyResponse.json();
 
 	// Modify the IP rule in the policy
-	console.log('before updated');
+	console.log('after updated');
 	let updated = false;
 	const newRules = policyData.result.rules.map((rule: any) => {
-		console.log('before if rule.include');
 		if (rule.include && Array.isArray(rule.include)) {
-			console.log('before rule.include=rule.include.map');
 			rule.include = rule.include.map((includeRule: any) => {
-				console.log('before includeRule.ip');
 				if (includeRule.ip) {
-					console.log('updating includeRule');
 					includeRule.ip = [newPolicy.content]; // Replace with the new IP
 					updated = true;
 				}

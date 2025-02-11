@@ -78,19 +78,18 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	}
 
 	// Get policy noted by hostname input.
-	const policyUUID = await cloudflare.kv.namespaces.values.get(nsId, newPolicy.name, {account_id: clientOptions.apiEmail});
-	if (!policyUUID) {
+	const policyUUIDResponse = await cloudflare.kv.namespaces.values.get(nsId, newPolicy.name, {account_id: clientOptions.apiEmail});
+	if (!policyUUIDResponse) {
 		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}
-	let jsonValue = await policyUUID.text();
-	console.log('KV store ' + nsTitle + ' key "' + newPolicy.name + '" found with value "' + jsonValue + '".');
+	const policyUUID = await policyUUID.text();
+	console.log('KV store ' + nsTitle + ' key "' + newPolicy.name + '" found with value "' + policyUUID + '".');
 
 	// Fetch existing policy
 	const policyResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {account_id: clientOptions.apiEmail});
 	if (!policyResponse.ok) {
 		throw new HttpError(400, 'Failed to fetch access policy.');
 	}
-	console.log('before policyData');
 	const policyData = await policyResopnse.json();
 
 	// Modify the IP rule in the policy

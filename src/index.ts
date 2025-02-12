@@ -86,15 +86,16 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	console.log('KV store ' + nsTitle + ' key "' + newPolicy.name + '" found with value "' + policyUUID + '".');
 
 	// Fetch existing policy
-	const policyData = (await cloudflare.zeroTrust.access.policies.get(policyUUID, {account_id: clientOptions.apiEmail})).result;
-	if (policyData.length == 0) {
+	const policyResponse = await cloudflare.zeroTrust.access.policies.get(policyUUID, {account_id: clientOptions.apiEmail}));
+	if (policyResponse.length == 0) {
 		throw new HttpError(400, 'Failed to fetch access policy.');
 	}
+	const policyData = policyResponse.json();
 
 	// Modify the IP rule in the policy
 	console.log('before updated');
 	let updated = false;
-	const newRules = policyData.rules.map((rule: any) => {
+	const newRules = policyData.result.rules.map((rule: any) => {
 		if (rule.include && Array.isArray(rule.include)) {
 			rule.include = rule.include.map((includeRule: any) => {
 				if (includeRule.ip) {

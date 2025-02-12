@@ -87,7 +87,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	// Fetch existing policy
 	const policyData = (await cloudflare.zeroTrust.access.policies.get(policyUUID, {account_id: clientOptions.apiEmail})).result;
-	if (!policyData) {
+	if (policyData.length == 0) {
 		throw new HttpError(400, 'Failed to fetch access policy.');
 	}
 

@@ -94,7 +94,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	// Modify the IP rule in the policy
 	console.log('before updated');
 	let updated = false;
-	const newRules = policyData.result.rules.map((rule: any) => {
+	const newRules = policyData.rules.map((rule: any) => {
 		if (rule.include && Array.isArray(rule.include)) {
 			rule.include = rule.include.map((includeRule: any) => {
 				if (includeRule.ip) {

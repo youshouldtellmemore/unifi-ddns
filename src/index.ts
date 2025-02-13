@@ -73,7 +73,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	console.log(namespace);
 
 	// Get policy noted by hostname input.
-	const policyUUIDResponse = await cloudflare.kv.namespaces.values.get(nsId, newPolicy.name, {account_id: clientOptions.apiEmail});
+	const policyUUIDResponse = await cloudflare.kv.namespaces.values.get(namespace.id, newPolicy.name, {account_id: clientOptions.apiEmail});
 	if (!policyUUIDResponse.ok) {
 		throw new HttpError(400, 'Failed to fetch from KV store.');
 	}

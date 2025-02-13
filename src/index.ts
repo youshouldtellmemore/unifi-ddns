@@ -96,7 +96,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	let updated = false;
 	const ruleInclude = policy.include.map((includeRule: any) => {
 		if (includeRule.ip) {
-			includeRule.ip.ip = [newPolicy.content];
+			includeRule.ip.ip = [newPolicy.content+"/32"];
 			updated = true;
 		}
 		return includeRule;

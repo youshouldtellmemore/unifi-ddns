@@ -82,12 +82,34 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	console.log('KV store ' + nsTitle + ' key "' + newPolicy.name + '" found with value "' + policyUUID + '".');
 
 	// Fetch existing policy
-	const policyResponse = await cloudflare.zeroTrust.access.policies.get(policyUUID, {account_id: clientOptions.apiEmail});
-	if (!policyResponse) {
-		throw new HttpError(400, 'Failed to fetch access policy.');
+	const policies = (
+		await cloudflare.zeroTrust.access.policies.list({
+			id: policyUUID,
+			account_id: clientOptions.apiEmail
+		})
+	).result;
+	if (policies.length === 0) {
+		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}
-	console.log(policyResponse);
-	const policyData = policyResponse.json();
+	const policy = policies[0];
+
+	let updated = false;
+	const ruleInclude = policy.include.map((includeRule: any) => {
+		if (includeRule.ip) {
+			includeRule.ip = [newPolicy.content];
+			updated = true;
+		}
+		return includeRule;
+	});
+	if (!updated) {
+		throw new HttpError(400, 'No IP rule found to update in the policy.');
+	}
+	/*const policyData = (
+		await cloudflare.zeroTrust.access.policies.get(
+			policyUUID,
+			{account_id: clientOptions.apiEmail}
+		);
+	);
 
 	// Modify the IP rule in the policy
 	console.log('before updated');
@@ -107,10 +129,10 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	if (!updated) {
 		throw new HttpError(400, 'No IP rule found to update in the policy.');
-	}
+	}*/
 
 	// Send updated policy
-	const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {rules: newRules, account_id: clientOptions.apiEmail});
+	const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {include: ruleInclude, account_id: clientOptions.apiEmail});
 	if (!updateResponse.ok) {
 		throw new HttpError(400, 'Failed to update access policy.')
 	}

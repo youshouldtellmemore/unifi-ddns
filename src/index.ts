@@ -134,7 +134,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	}*/
 
 	// Send updated policy
-	const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {include: ruleInclude, account_id: clientOptions.apiEmail});
+	const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {include: ruleInclude, account_id: clientOptions.apiEmail, decision: policy.decision});
 	if (!updateResponse.ok) {
 		throw new HttpError(400, 'Failed to update access policy.')
 	}

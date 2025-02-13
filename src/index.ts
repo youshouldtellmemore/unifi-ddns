@@ -67,7 +67,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (namespaces.length > 1) {
 		throw new HttpError(400, 'More than one KV namespace was found! You must only have 1 KV namespace with title ' + nsTitle + '.');
 	} else if (namespaces.length == 0) {
-		throw new HttpError(400, 'No KV namespaces found! You must create a KV namespace with title ' + nsTitle '.');
+		throw new HttpError(400, 'No KV namespaces found! You must create a KV namespace with title ' + nsTitle + '.');
 	}
 	const namespace = namespaces[0];
 	console.log(namespace);

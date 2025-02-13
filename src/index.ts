@@ -96,7 +96,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	let updated = false;
 	const ruleInclude = policy.include.map((includeRule: any) => {
 		if (includeRule.ip) {
-			includeRule.ip = [newPolicy.content];
+			includeRule.ip.ip = [newPolicy.content];
 			updated = true;
 		}
 		return includeRule;
@@ -134,7 +134,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	}*/
 
 	// Send updated policy
-	const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {include: ruleInclude, account_id: clientOptions.apiEmail});
+	const updateResponse = await cloudflare.zeroTrust.access.policies.update(policyUUID, {include: [ruleInclude], account_id: clientOptions.apiEmail});
 	if (!updateResponse.ok) {
 		throw new HttpError(400, 'Failed to update access policy.')
 	}

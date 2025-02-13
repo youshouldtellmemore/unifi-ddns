@@ -60,17 +60,18 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	// Get KV namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
-	const namespaces = (await cloudflare.kv.namespaces.list({
-		account_id: clientOptions.apiEmail,
-		title: nsTitle
-	})).result;
+	const namespaces = (
+		await cloudflare.kv.namespaces.list({
+			account_id: clientOptions.apiEmail,
+			title: nsTitle
+		})
+	).result;
 	if (namespaces.length > 1) {
 		throw new HttpError(400, 'More than one KV namespace was found! You must only have 1 KV namespace with title ' + nsTitle + '.');
 	} else if (namespaces.length == 0) {
 		throw new HttpError(400, 'No KV namespaces found! You must create a KV namespace with title ' + nsTitle + '.');
 	}
 	const namespace = namespaces[0];
-	console.log(namespace);
 
 	// Get policy noted by hostname input.
 	const policyUUIDResponse = await cloudflare.kv.namespaces.values.get(namespace.id, newPolicy.name, {account_id: clientOptions.apiEmail});
@@ -85,6 +86,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (!policyResponse) {
 		throw new HttpError(400, 'Failed to fetch access policy.');
 	}
+	console.log(policyResponse);
 	const policyData = policyResponse.json();
 
 	// Modify the IP rule in the policy

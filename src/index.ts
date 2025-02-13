@@ -104,7 +104,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	if (!updated) {
 		throw new HttpError(400, 'No IP rule found to update in the policy.');
 	}
-	console.log('Updating policy IP.');
+	console.log(ruleInclude);
 
 	/*const policyData = (
 		await cloudflare.zeroTrust.access.policies.get(

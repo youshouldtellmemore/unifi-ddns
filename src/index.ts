@@ -59,23 +59,18 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	}
 
 	// Get KV namespace.
-	const namespaces = (await cloudflare.kv.namespaces.list({account_id: clientOptions.apiEmail})).result;
-	if (namespaces.length == 0) {
-		throw new HttpError(400, 'No KV namespaces found!');
-	}
-
-	// Get specific namespace.
 	const nsTitle = 'unifi-cloudflare-ddns-access-kv';  // TODO:derived from wrangler.toml:name
-	let nsId = undefined;
-	for(let i = 0; i < namespaces.length; i++) {
-		if (namespaces[i].title == nsTitle) {
-			nsId = namespaces[i].id;
-			break;
-		}
+	const namespaces = (await cloudflare.kv.namespaces.list({
+		account_id: clientOptions.apiEmail,
+		title: nsTitle
+	})).result;
+	if (namespaces.length > 1) {
+		throw new HttpError(400, 'More than one KV namespace was found! You must only have 1 KV namespace with title ' + nsTitle + '.');
+	} else if (namespaces.length == 0) {
+		throw new HttpError(400, 'No KV namespaces found! You must create a KV namespace with title ' + nsTitle '.');
 	}
-	if (nsId === undefined) {
-		throw new HttpError(400, 'Unable to locate KV namespace with title ' + nsTitle + '.');
-	}
+	const namespace = namespaces[0];
+	console.log(namespace);
 
 	// Get policy noted by hostname input.
 	const policyUUIDResponse = await cloudflare.kv.namespaces.values.get(nsId, newPolicy.name, {account_id: clientOptions.apiEmail});
@@ -87,7 +82,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	// Fetch existing policy
 	const policyResponse = await cloudflare.zeroTrust.access.policies.get(policyUUID, {account_id: clientOptions.apiEmail});
-	if (policyResponse.length == 0) {
+	if (!policyResponse) {
 		throw new HttpError(400, 'Failed to fetch access policy.');
 	}
 	const policyData = policyResponse.json();

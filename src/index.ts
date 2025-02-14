@@ -98,7 +98,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 	const policyInclude = policy.include.map((rule: any) => {
 		let newRule = rule;
 		if (!updated && rule.ip) {
-			rule.ip.ip = newPolicy.content;
+			rule.ip.ip = newPolicy.content + "/32";
 			updated = true;
 		}
 		return rule;
@@ -112,7 +112,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 			account_id: clientOptions.apiEmail,
 			name: policy.name,
 			decision: policy.decision,
-			include: [policyInclude],
+			include: policyInclude,
 		}
 	);
 console.log(updateResponse);

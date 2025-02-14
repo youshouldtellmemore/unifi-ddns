@@ -92,7 +92,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
 	}
 	const policy = policies[0];
-
+	console.log(policy);
 	let updated = false;
 	const ruleInclude = policy.include.map((includeRule: any) => {
 		if (includeRule.ip) {

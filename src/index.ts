@@ -124,6 +124,9 @@ export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const url = new URL(request.url);
 		console.log('Requester IP: ' + request.headers.get('CF-Connecting-IP'));
+		console.log('CF Ray ID: ' + request.headers.get('CF-Ray'));
+		console.log('User Agent: ' + request.headers.get('User-Agent'));
+		console.log('Referer: ' + request.headers.get('Referer'));
 		console.log(request.method + ': ' + request.url);
 		console.log('Body: ' + (await request.text()));
 

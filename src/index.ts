@@ -103,6 +103,7 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 		}
 		return newRule;
 	});
+	console.log(policyInclude);
 
 	// Send updated policy
 	const updateResponse = await cloudflare.zeroTrust.access.policies.update(

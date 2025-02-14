@@ -96,11 +96,12 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 
 	let updated = false;
 	const policyInclude = policy.include.map((rule: any) => {
-		if (!updated && rule.ip && rule.ip.ip) {
-			rule.ip.ip = [newPolicy.content];
+		let newRule = rule;
+		if (!updated && rule.ip) {
+			newRule = {ip: {ip: [newPolicy.content]}};
 			updated = true;
 		}
-		return rule;
+		return newRule;
 	});
 
 	// Send updated policy

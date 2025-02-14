@@ -89,22 +89,19 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 		})
 	).result;
 	if (policies.length === 0) {
-		throw new HttpError(400, 'No policy found! You must first manually create the policy.');
+		throw new HttpError(400, 'No policies found! You must first manually create the policy.');
 	}
 	const policy = policies[0];
 	console.log(policy);
+
 	let updated = false;
-	const ruleInclude = policy.include.map((includeRule: any) => {
-		if (includeRule.ip) {
-			includeRule.ip.ip = [newPolicy.content+"/32"];
+	const policyInclude = policy.include.map((rule: any) => {
+		if (!updated && rule.ip && rule.ip.ip) {
+			rule.ip.ip = [newPolicy.content];
 			updated = true;
 		}
-		return includeRule;
+		return rule;
 	});
-	if (!updated) {
-		throw new HttpError(400, 'No IP rule found to update in the policy.');
-	}
-	console.log(ruleInclude);
 
 	// Send updated policy
 	const updateResponse = await cloudflare.zeroTrust.access.policies.update(
@@ -112,10 +109,11 @@ async function update(clientOptions: ClientOptions, newPolicy: IPPolicy): Promis
 		{
 			account_id: clientOptions.apiEmail,
 			name: policy.name,
-			include: ruleInclude,
 			decision: policy.decision,
+			include: policyInclude,
 		}
 	);
+console.log(updateResponse);
 	if (!updateResponse.ok) {
 		throw new HttpError(400, 'Failed to update access policy.')
 	}
